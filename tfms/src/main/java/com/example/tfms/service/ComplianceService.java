@@ -5,8 +5,9 @@ import com.example.tfms.model.entity.Compliance;
 import java.util.List;
 
 public interface ComplianceService {
-    Compliance generateReport(String transactionReference);
-    Compliance submitReport(Compliance report);
-    Compliance getById(Long id);
+    Compliance check(String transactionReference);
+    Compliance getById(Long complianceId);
     List<Compliance> listAll();
+    List<Compliance> findNonCompliant();
+    long count();
 }

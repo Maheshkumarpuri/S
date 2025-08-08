@@ -29,12 +29,18 @@ public class TradeDocumentServiceImpl implements TradeDocumentService {
     }
 
     @Override
-    public TradeDocument upload(TradeDocument meta, MultipartFile file) throws IOException {
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-        Path target = storagePath.resolve(System.currentTimeMillis() + "_" + originalFilename);
-        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        meta.setFilePath(target.toString());
-        return repository.save(meta);
+    public TradeDocument upload(TradeDocument document, MultipartFile file) {
+        try {
+            if (file != null && !file.isEmpty()) {
+                String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+                Path target = storagePath.resolve(System.currentTimeMillis() + "_" + originalFilename);
+                Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+                document.setFilePath(target.toString());
+            }
+            return repository.save(document);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -44,21 +50,29 @@ public class TradeDocumentServiceImpl implements TradeDocumentService {
     }
 
     @Override
-    public TradeDocument update(Long documentId, TradeDocument updates) {
-        TradeDocument existing = getById(documentId);
-        if (updates.getDocumentType() != null) existing.setDocumentType(updates.getDocumentType());
-        if (updates.getReferenceNumber() != null) existing.setReferenceNumber(updates.getReferenceNumber());
-        if (updates.getUploadedBy() != null) existing.setUploadedBy(updates.getUploadedBy());
-        if (updates.getStatus() != null) existing.setStatus(updates.getStatus());
-        return repository.save(existing);
-    }
-
-    @Override
     public List<TradeDocument> listAll() {
         return repository.findAll();
     }
 
     @Override
+    public void delete(Long documentId) {
+        TradeDocument document = getById(documentId);
+        if (document.getFilePath() != null) {
+            try {
+                Files.deleteIfExists(Path.of(document.getFilePath()));
+            } catch (IOException e) {
+                // Log error but continue with database deletion
+            }
+        }
+        repository.deleteById(documentId);
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
+    }
+
+    // Helper method for file download (not in interface but useful)
     public byte[] downloadFile(Long documentId) throws IOException {
         TradeDocument doc = getById(documentId);
         if (doc.getFilePath() == null) {
