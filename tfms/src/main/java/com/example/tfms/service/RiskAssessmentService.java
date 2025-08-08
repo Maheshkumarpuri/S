@@ -5,7 +5,8 @@ import com.example.tfms.model.entity.RiskAssessment;
 import java.util.List;
 
 public interface RiskAssessmentService {
-    RiskAssessment analyze(RiskAssessment request);
+    RiskAssessment analyze(String transactionReference);
     RiskAssessment getById(Long riskId);
     List<RiskAssessment> listAll();
+    long count();
 }

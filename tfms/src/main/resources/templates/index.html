@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Trade Finance Management System</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="bi bi-bank2"></i> TFMS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/}">
+                            <i class="bi bi-house"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-file-text"></i> Letter of Credit
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/lc}">View All</a></li>
+                            <li><a class="dropdown-item" th:href="@{/lc/new}">Create New</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-shield-check"></i> Bank Guarantee
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/guarantee}">View All</a></li>
+                            <li><a class="dropdown-item" th:href="@{/guarantee/new}">Request New</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-file-earmark"></i> Documents
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/documents}">View All</a></li>
+                            <li><a class="dropdown-item" th:href="@{/documents/upload}">Upload New</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/risk}">
+                            <i class="bi bi-graph-up"></i> Risk Assessment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/compliance}">
+                            <i class="bi bi-check-circle"></i> Compliance
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h2 mb-1">Trade Finance Dashboard</h1>
+                        <p class="text-muted">Welcome to the Trade Finance Management System</p>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted">Last updated: <span th:text="${#temporals.format(#temporals.createNow(), 'dd-MM-yyyy HH:mm')}"></span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-text display-4 mb-2"></i>
+                        <h3 class="display-4" th:text="${lcCount ?: 0}">0</h3>
+                        <p class="mb-0">Letters of Credit</p>
+                        <small class="opacity-75">Active transactions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card success">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check display-4 mb-2"></i>
+                        <h3 class="display-4" th:text="${guaranteeCount ?: 0}">0</h3>
+                        <p class="mb-0">Bank Guarantees</p>
+                        <small class="opacity-75">Issued & pending</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card warning">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-earmark display-4 mb-2"></i>
+                        <h3 class="display-4" th:text="${documentCount ?: 0}">0</h3>
+                        <p class="mb-0">Trade Documents</p>
+                        <small class="opacity-75">Uploaded files</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card info">
+                    <div class="card-body text-center">
+                        <i class="bi bi-exclamation-triangle display-4 mb-2"></i>
+                        <h3 class="display-4" th:text="${riskCount ?: 0}">0</h3>
+                        <p class="mb-0">Risk Assessments</p>
+                        <small class="opacity-75">Completed analyses</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/lc/new}" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-circle"></i> New Letter of Credit
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/guarantee/new}" class="btn btn-success w-100">
+                                    <i class="bi bi-shield-plus"></i> Request Guarantee
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/documents/upload}" class="btn btn-warning w-100">
+                                    <i class="bi bi-cloud-upload"></i> Upload Document
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/risk/new}" class="btn btn-info w-100">
+                                    <i class="bi bi-graph-up"></i> Risk Analysis
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Letters of Credit</h5>
+                        <a th:href="@{/lc}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${recentLC != null and !#lists.isEmpty(recentLC)}">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Applicant</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Expiry</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="lc : ${recentLC}">
+                                            <td th:text="${lc.lcId}">#001</td>
+                                            <td th:text="${lc.applicantName}">ABC Corp</td>
+                                            <td th:text="${lc.currency + ' ' + #numbers.formatDecimal(lc.amount, 0, 2)}">USD 100,000.00</td>
+                                            <td>
+                                                <span class="badge" th:data-status="${lc.status}" th:text="${lc.status}">OPEN</span>
+                                            </td>
+                                            <td th:text="${#temporals.format(lc.expiryDate, 'dd-MM-yyyy')}">31-12-2024</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div th:if="${recentLC == null or #lists.isEmpty(recentLC)}" class="text-center py-4">
+                            <i class="bi bi-inbox display-1 text-muted"></i>
+                            <p class="text-muted mt-2">No recent letters of credit found</p>
+                            <a th:href="@{/lc/new}" class="btn btn-primary">Create Your First LC</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-exclamation-circle"></i> Compliance Alerts</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${complianceAlerts != null and !#lists.isEmpty(complianceAlerts)}">
+                            <div th:each="alert : ${complianceAlerts}" class="alert alert-warning alert-sm mb-2">
+                                <small>
+                                    <strong th:text="${alert.transactionReference}">REF-001</strong><br>
+                                    <span th:text="${alert.remarks}">Missing documentation</span>
+                                </small>
+                            </div>
+                        </div>
+                        <div th:if="${complianceAlerts == null or #lists.isEmpty(complianceAlerts)}" class="text-center py-3">
+                            <i class="bi bi-check-circle text-success display-4"></i>
+                            <p class="text-muted mt-2 mb-0">All systems compliant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-gear"></i> System Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small>Database Connection</small>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small>File Storage</small>
+                            <span class="badge bg-success">Available</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small>Risk Engine</small>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 Trade Finance Management System. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small class="text-muted">Version 1.0.0</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

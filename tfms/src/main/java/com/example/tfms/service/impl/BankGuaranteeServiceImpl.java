@@ -42,4 +42,9 @@ public class BankGuaranteeServiceImpl implements BankGuaranteeService {
     public List<BankGuarantee> listAll() {
         return repository.findAll();
     }
+
+    @Override
+    public long count() {
+        return repository.count();
+    }
 }
