@@ -5,6 +5,9 @@ import com.example.tfms.model.entity.LetterOfCredit;
 import com.example.tfms.model.entity.enums.LetterOfCreditStatus;
 import com.example.tfms.repository.LetterOfCreditRepository;
 import com.example.tfms.service.LetterOfCreditService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,5 +57,16 @@ public class LetterOfCreditServiceImpl implements LetterOfCreditService {
     @Override
     public List<LetterOfCredit> listAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<LetterOfCredit> findRecent(int limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return repository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
     }
 }

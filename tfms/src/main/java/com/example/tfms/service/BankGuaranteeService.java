@@ -9,4 +9,5 @@ public interface BankGuaranteeService {
     BankGuarantee issue(Long guaranteeId);
     BankGuarantee getById(Long guaranteeId);
     List<BankGuarantee> listAll();
+    long count();
 }

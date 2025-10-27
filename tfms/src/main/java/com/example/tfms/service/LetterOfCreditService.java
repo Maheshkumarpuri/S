@@ -10,4 +10,6 @@ public interface LetterOfCreditService {
     LetterOfCredit close(Long lcId);
     LetterOfCredit getById(Long lcId);
     List<LetterOfCredit> listAll();
+    List<LetterOfCredit> findRecent(int limit);
+    long count();
 }
